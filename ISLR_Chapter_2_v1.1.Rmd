@@ -1,0 +1,464 @@
+---
+Book: 'An Introduction to Statistical Learning with Applications in R by Gareth James,Daniela Witten,Trevor Hastie,Robert Tibshirani'
+Notebook title: "ISLR_Chapter2_Applied_Questions_Solutions"
+Author: 'Vinayak Singh'
+Version: v1.1
+Output: '.Rmd file'
+Data Sources: College dataset, Auto dataset, Boston Crime dataset
+College and Auto datasets are provided with the notebook and crime dataset is part of MASS library.
+
+---
+
+'''This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Cmd+Shift+Enter*. 
+
+Question8 -  This exercise relates to the College data set, which can be found in
+the file College.csv. It contains a number of variables for 777 different
+universities and colleges in the US. The variables are '''
+
+Private : Public/private indicator
+• Apps : Number of applications received
+• Accept : Number of applicants accepted
+• Enroll : Number of new students enrolled
+• Top10perc : New students from top 10% of high school class
+• Top25perc : New students from top 25% of high school class
+• F.Undergrad : Number of full-time undergraduates
+• P.Undergrad : Number of part-time undergraduates
+• Outstate : Out-of-state tuition
+• Room.Board : Room and board costs
+• Books : Estimated book costs
+• Personal : Estimated personal spending
+• PhD : Percent of faculty with Ph.D.’s
+• Terminal : Percent of faculty with terminal degree
+• S.F.Ratio : Student/faculty ratio
+• perc.alumni : Percent of alumni who donate
+• Expend : Instructional expenditure per student
+• Grad.Rate : Graduation rate
+
+Before reading the data into R, it can be viewed in Excel or a text
+editor.
+Section (a) Use the read.csv() function to read the data into R. Call the
+loaded data college. Make sure that you have the directory set
+to the correct location for the data.
+
+```{r}
+file_name <- file.choose()
+college_dataset <- read.csv(file_name)
+```
+
+Section (b) Look at the data using the fix() function. You should notice
+that the first column is just the name of each university.We don’t
+really want R to treat this as data. However, it may be handy to
+have these names for later. Try the following commands:
+
+```{r}
+View(college_dataset)
+rownames(college_dataset) = college_dataset[,1]
+college_dataset <- college_dataset[,-1]
+
+```
+
+Now you should see that the first data column is Private. Note
+that another column labeled row.names now appears before the
+Private column. However, this is not a data column but rather
+the name that R is giving to each row.
+
+Section - (c)
+i). Use the summary() function to produce a numerical summary
+of the variables in the data set.
+
+ii). Use the pairs() function to produce a scatterplot matrix of
+the first ten columns or variables of the data. Recall that
+you can reference the first ten columns of a matrix A using
+A[,1:10].
+
+```{r}
+## (i) ##
+print('This is the summary of the college_dataset')
+print('click on the R console if you execute the entire block of the code together')
+summary(college_dataset)
+
+##(ii)###
+print('This is the scatterplot matrix of the first ten columns')
+print('Click on show in new window on the upper right corner to see it in a new window')
+pairs(college_dataset[, 1:10])
+
+```
+
+iii). Use the plot() function to produce side-by-side boxplots of
+Outstate versus Private.
+```{r}
+print('select the right window')
+attach(college_dataset)
+par(mfrow = c(1,2))
+plot(Outstate, main = 'Outstate  distribution')
+plot(Private, main = 'Private  distribution')
+
+```
+
+iv). Create a new qualitative variable, called Elite, by binning
+the Top10perc variable. We are going to divide universities
+into two groups based on whether or not the proportion
+of students coming from the top 10% of their high school
+classes exceeds 50%.
+
+Use the summary() function to see how many elite universities
+there are. Now use the plot() function to produce
+side-by-side boxplots of Outstate versus Elite.
+
+```{r}
+Elite = rep('No', nrow(college_dataset)) #This creates a new variable 'Elite' and only have 'No' string as data
+Elite[college_dataset$Top10perc > 50] = "Yes" #This replaces 'No' with 'Yes' Wherever the Top10perc column value is more than 50
+Elite = as.factor(Elite) # set this variable as factor and see the change in values after converting it to factor. they change from 'Yes' and 'No' to 1 and 2
+college_dataset = data.frame(college_dataset, Elite) # Add this column to the data frame and now you have 19 variable instead of 18
+summary(college_dataset)
+par(mfrow = c(1,2))
+plot(Outstate, main = 'Outstate  distribution')
+plot(Elite, main = 'Elite  distribution')
+```
+
+v). Use the hist() function to produce some histograms with
+differing numbers of bins for a few of the quantitative variables.
+You may find the command par(mfrow=c(2,2)) useful:
+it will divide the print window into four regions so that four
+plots can be made simultaneously. Modifying the arguments
+to this function will divide the screen in other ways.
+
+```{r}
+par(mfrow = c(2,2))
+hist(Top10perc)
+hist(Top25perc)
+hist(F.Undergrad)
+hist(P.Undergrad)
+```
+
+vi). Continue exploring the data, and provide a brief summary
+of what you discover.
+
+```{r}
+##Some data exploration 
+
+#:TODO
+
+```
+
+9. This exercise involves the Auto data set studied in the lab. Make sure
+that the missing values have been removed from the data.
+
+lets upload the auto dataset first
+```{r}
+file_name <- file.choose()
+Auto_dataset <- read.csv(file_name)
+```
+
+
+(a) Which of the predictors are quantitative, and which are qualitative?
+
+```{r}
+##a good way to identify the type of the variable is str() command
+
+str(Auto_dataset)
+##all the integers and numbers are probabily quantitative but its good to have some background knowledge on the dataset to confirm this assumption.
+#there are multiple ways to do this and in modern R  with less code we can do
+Auto_dataset_qualitative <- Auto_dataset[,sapply(Auto_dataset, is.factor)]
+Auto_dataset_quantitative <- Auto_dataset[,sapply(Auto_dataset, is.numeric) | sapply(Auto_dataset, is.integer)]
+cat('qualitative variables are: ', capture.output(dput(colnames(Auto_dataset_qualitative))))
+cat('quantitative variables are: ', capture.output(dput(colnames(Auto_dataset_quantitative))))
+######or there is even a faster way if code performance is your concern
+#college_dataset_qualitative <- Filter(is.factor ,college_dataset)
+
+```
+
+b). What is the range of each quantitative predictor? You can answer
+this using the range() function.
+
+```{r}
+print('The range for individual quantitative column is: ')
+sapply(Auto_dataset_quantitative, range)
+```
+
+c). What is the mean and standard deviation of each quantitative
+predictor?
+
+```{r}
+print('The mean for individual quantitative column is: ')
+sapply(Auto_dataset_quantitative, mean)
+
+print('The standard deviation for individual quantitative column is: ')
+sapply(Auto_dataset_quantitative, sd)
+```
+
+More is better so lets do it all together.
+
+```{r}
+print('Summary statistics for quantitative dataset')
+sapply(Auto_dataset_quantitative, function(x) c( "Stand dev" = sd(x), 
+                         "Mean"= mean(x,na.rm=TRUE),
+                         'Range' = range(x),
+                         "n" = length(x),
+                         "Median" = median(x),
+                         "CoeffofVariation" = sd(x)/mean(x,na.rm=TRUE),
+                         "Minimum" = min(x),
+                         "Maximun" = max(x),
+                         "Upper Quantile" = quantile(x,1),
+                         "LowerQuartile" = quantile(x,0)
+                    )
+)
+###Note: if this view helps you to understand data better i would advice you to explore the gather feature from tidyr library
+```
+
+(d) Now remove the 10th through 85th observations. What is the
+range, mean, and standard deviation of each predictor in the
+subset of the data that remains?
+
+```{r}
+Auto_dataset_quantitative_10_85_rm <- Auto_dataset_quantitative[-(10:85) , ] # removing rows 10th through 85th observation 
+
+sapply(college_dataset_quantitative_10_85_rm, function(x) c( "Stand dev" = sd(x), 
+                         "Mean"= mean(x,na.rm=TRUE),
+                         'Range' = range(x),
+                         "n" = length(x),
+                         "Median" = median(x),
+                         "CoeffofVariation" = sd(x)/mean(x,na.rm=TRUE),
+                         "Minimum" = min(x),
+                         "Maximun" = max(x),
+                         "Upper Quantile" = quantile(x,1),
+                         "LowerQuartile" = quantile(x,0)
+                    )
+)
+```
+
+
+e). Using the full data set, investigate the predictors graphically,
+using scatterplots or other tools of your choice. Create some plots
+highlighting the relationships among the predictors. Comment
+on your findings.
+
+```{r}
+#A lot can be done for elementry analysis and this is just a basic analysis. A deep dive is required to understand the data distribution, corelation between variables, outliers and other matrices.
+library(dplyr)
+head(arrange(Auto_dataset, mpg)) ##lets arrange as per milage
+head(arrange(Auto_dataset, desc(mpg))) ## Sorting as per milage per gallon 
+head(arrange(Auto_dataset, desc(cylinders))) ## lets check by cylinders
+##lets plot the relationship between mpg and horsepower
+library(ggplot2)
+ggplot(Auto_dataset, aes(horsepower,mpg)) + geom_point()
+## seems there are few cars with good milage and good horsepower as well
+## lets check years distribution
+ggplot(Auto_dataset, aes(year)) + geom_histogram()
+##ohhh many cars from 73...
+###these are just few exmples and all the variables can be explored in the same way
+
+```
+
+(f) Suppose that we wish to predict gas mileage (mpg) on the basis
+of the other variables. Do your plots suggest that any of the
+other variables might be useful in predicting mpg? Justify your
+answer.
+
+```{r}
+## for this question lets do some correlation matrix to understand variable relationships
+library(ggcorrplot)
+library(polycor) #--V1.1 Changes
+##if its not in your system install with install.packages("ggcorrplot")
+##if its not in your system install with install.packages("polycor")
+## lets remove the name field as its not required for correlation matrix
+Auto_dataset_corr <- subset(Auto_dataset, select = -name)
+##alternative method: Auto_dataset$name <- NULL
+##Convert factor to numeric
+Auto_dataset_corr$cylinders <- as.factor(Auto_dataset_corr$cylinders)
+Auto_dataset_corr$year <- as.factor(Auto_dataset_corr$year)
+hetcor(Auto_dataset_corr)
+
+#Note: Click on data.frame 8*8 window and this is tittle complex part 
+#here polycor Computes a heterogenous correlation matrix, consisting of Pearson product-moment correlations between numeric variables, polyserial correlations between numeric and ordinal variables, and poly- choric correlations between ordinal variables.
+#Ignore this part and if you are not aware about the concepts and just look at the correlations.
+
+```
+
+10. This exercise involves the Boston housing data set.
+(a) To begin, load in the Boston data set. The Boston data set is
+part of the MASS library in R.
+How many rows are in this data set? How many columns? What
+do the rows and columns represent?
+
+dataset variables: 
+crim: per capita crime rate by town.
+zn: proportion of residential land zoned for lots over 25,000 sq.ft.
+indus: proportion of non-retail business acres per town.
+chas: Charles River dummy variable (= 1 if tract bounds river; 0 otherwise).
+nox: nitrogen oxides concentration (parts per 10 million).
+rm: average number of rooms per dwelling.
+age: proportion of owner-occupied units built prior to 1940.
+dis: weighted mean of distances to five Boston employment centres.
+rad: index of accessibility to radial highways.
+tax: full-value property-tax rate per \$10,000.
+ptratio: pupil-teacher ratio by town.
+black: 1000(Bk - 0.63)^2 where Bk is the proportion of blacks by town.
+lstat: lower status of the population (percent).
+medv: median value of owner-occupied homes in \$1000s.
+
+
+```{r}
+library(MASS, quietly = TRUE)
+Boston_dataset <- Boston
+cat('There are total', dim(Boston_dataset)[1],'rows in the dataset')
+cat('There are total', dim(Boston_dataset)[2],'columns in the dataset')
+
+```
+
+(b) Make some pairwise scatterplots of the predictors (columns) in
+this data set. Describe your findings.
+
+```{r}
+pairs(Boston_dataset, gap = 0, pch = '.')
+#this is the pairwise scatterplot and you can find relationships in the columns
+```
+
+b) Make some pairwise scatterplots of the predictors (columns) in
+this data set. Describe your findings.
+
+```{r}
+## there multiple ways to do this 
+## method_1
+
+library(tibble)
+library(dplyr)
+library(tidyr)
+
+var_corr <- Boston_dataset %>% as.matrix %>% cor %>% as.data.frame %>% rownames_to_column(var = 'Variable_1') %>% gather(variable_2,value, -Variable_1)
+
+filter(var_corr, Variable_1 == 'crim' & value > .5)
+
+##Ok! so bostom crime has correlation with rad and tax and you can explore this relationship further
+
+```
+
+(d) Do any of the suburbs of Boston appear to have particularly
+high crime rates? Tax rates? Pupil-teacher ratios? Comment on
+the range of each predictor.
+
+```{r}
+##lets see the range of all the variables 
+sapply(Boston_dataset, range)
+```
+
+d). Do any of the suburbs of Boston appear to have particularly
+high crime rates? Tax rates? Pupil-teacher ratios? Comment on
+the range of each predictor.
+
+```{r}
+##lets check the highest crime, tax and pupil-teacher suburbs
+attach(Boston_dataset)
+## Crime
+cat('The highest per capita crime rate by town is:', max(crim))
+cat('The highest per capita crime rate by town index is:', which.max(crim))
+
+##Tax
+cat('The highest full-value property-tax rate per \10,000 is:', max(tax))
+cat('The highest per capita crime rate by town index is:', which.max(tax))
+
+##Pupil-teacher ratio
+cat('The highest pupil-teacher ratio by town is:', max(ptratio))
+cat('The highest pupil-teacher ratio by town index is:', which.max(ptratio))
+
+## you can plot distribution plots as illustrated before for more understanding.
+
+```
+
+
+(e) How many of the suburbs in this data set bound the Charles
+river?
+
+```{r}
+## We can plot a histrogram to know this
+#lets check this through table function
+cat('there are total', table(chas)[2], 'suburbs bound the Charles river')
+##lets plot it
+barplot(table(chas))
+
+```
+
+(f) What is the median pupil-teacher ratio among the towns in this
+data set?
+
+```{r}
+cat('The median pupil-teacher ratio among the town is', median(ptratio))
+```
+
+
+(g) Which suburb of Boston has lowest median value of owneroccupied
+homes? What are the values of the other predictors
+for that suburb, and how do those values compare to the overall
+ranges for those predictors? Comment on your findings.
+
+```{r}
+cat('the lowest of lowest median value of owneroccupied homes is', min(medv))
+cat('the suburb of lowest median value of owneroccupied homes is', which.min(medv))
+## now lets see the suburb of 399 in dataset
+Boston_dataset[which.min(medv),]
+## Boston_dataset[399, ] if you know the row number you can do this as well
+```
+
+
+h) In this data set, how many of the suburbs average more than
+seven rooms per dwelling? More than eight rooms per dwelling?
+Comment on the suburbs that average more than eight rooms
+per dwelling.
+
+```{r}
+##lets check the number of suburbs average more than seven in our dataset first.
+
+cat('The total number of suburbs average more than seven in our dataset is:',nrow(filter(Boston_dataset, rm > 7)))
+cat('The total number of suburbs average more than seven in our dataset is:',nrow(filter(Boston_dataset, rm > 8)))
+##now lets look at the suburbs where rooms per dwelling are more than 8
+View(Boston_dataset[Boston_dataset$rm > 8,])
+```
+
+you can take this dataset and do some elementry analysis to find more facts as done for earlier datasets.
+
+but some here are few stats just for our understanding.
+
+```{r}
+boston_rm_8 <- Boston_dataset[Boston_dataset$rm > 8,]
+
+sapply(boston_rm_8, function(x) c( "Stand dev" = sd(x), 
+                         "Mean"= mean(x,na.rm=TRUE),
+                         'Range' = range(x),
+                         "n" = length(x),
+                         "Median" = median(x),
+                         "CoeffofVariation" = sd(x)/mean(x,na.rm=TRUE),
+                         "Minimum" = min(x),
+                         "Maximun" = max(x),
+                         "Upper Quantile" = quantile(x,1),
+                         "LowerQuartile" = quantile(x,0)
+                    )
+)
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file). 
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+
