@@ -41,7 +41,7 @@ abline(v=mean(sales))
 
 ```
 
-## In this example our independent variable (Y variable) is sales and dependent variable is sales(X variable)
+## In this example our independent variable (X variable) is TV and dependent variable is sales(Y variable)
 to calculate RSS (Residual Sum of square) we need beta0 and beta1
 lets calculate beta1 first
 
@@ -112,7 +112,7 @@ plot(res_density, main = 'Model residual error distribution')
 
 ## μ = ¯y (Refer to formula 3.7 in the book)
 ```{r}
-variance_y_mean <- (sd(Y))/sqrt(length(Y))
+std_error_y_mean <- (sd(Y))/sqrt(length(Y))
 
 ```
 
